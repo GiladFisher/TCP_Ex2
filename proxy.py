@@ -158,8 +158,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
 
                 # Send the response back to the client
                 client_socket.sendall(response)  # sendall() sends the entire data contained in response to the socket.
-                client_socket.close()  # so that next time we enter the while loop, data will be empty and we will break
-                
+
             except Exception as e:
                 print(f"Unexpected server error: {e}")
                 client_socket.sendall(api.CalculatorHeader.from_error(api.CalculatorServerError(
