@@ -88,8 +88,8 @@ def server(host: str, port: int) -> None:
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # Prepare the server socket
-        # * Fill in start (1)
-        # * Fill in end (1)
+        server_socket.bind((host, port)) # Bind the socket to the port
+        server_socket.listen(3)  # maximum number of queued connection. will only get 1 in practice, but wrote 3 for good measure
 
         threads = []
         print(f"Listening on {host}:{port}")
@@ -98,7 +98,11 @@ def server(host: str, port: int) -> None:
             try:
                 # Establish connection with client.
                 
-                client_socket, address = # * Fill in start (2) # * Fill in end (2)
+                client_socket, address = server_socket.accept()
+                # accept() waits for a connection to be made and returns a new socket object representing the connection
+                # and the address of the client.
+                # NOTE: the program will stop here until a connection is made
+
 
                 # Create a new thread to handle the client request
                 thread = threading.Thread(target=client_handler, args=(
@@ -123,7 +127,10 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
         print(f"Conection established with {client_addr}")
         while True:
             
-            data = # * Fill in start (3) # * Fill in end (3)
+            data = client_socket.recv(65536) # I chose this number because it is the maximum size of a TCP packet 2^16
+            # recv() returns an empty string if there is an error or the connection is closed
+            # otherwise, it returns the data received
+
             if not data:
                 break
             try:
