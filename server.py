@@ -127,7 +127,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
         print(f"Conection established with {client_addr}")
         while True:
             
-            data = client_socket.recv(65536) # I chose this number because it is the maximum size of a TCP packet 2^16
+            data = client_socket.recv(api.BUFFER_SIZE) # 2^16
             # recv() returns an empty string if there is an error or the connection is closed
             # otherwise, it returns the data received
 
@@ -149,8 +149,8 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
                 print(
                     f"{client_prefix} Sending response of length {len(response)} bytes")
 
-                client_socket.sendall(response) # sendall() sends the entire data contained in response to the socket.
-                client_socket.close() # so that next time we enter the while loop, data will be empty and we will break
+                client_socket.sendall(response)  # sendall() sends the entire data contained in response to the socket.
+                client_socket.close()  # so that next time we enter the while loop, data will be empty and we will break
 
             except Exception as e:
                 print(f"Unexpected server error: {e}")

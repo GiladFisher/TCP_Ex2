@@ -84,8 +84,9 @@ def proxy(proxy_address: tuple[str, int], server_adress: tuple[str, int]) -> Non
         proxy_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # Prepare the proxy socket
-        # * Fill in start (1)
-        # * Fill in end (1)
+        proxy_socket.bind(proxy_address)
+        # Binds the socket to the port. And takes the name it is given as an argument (proxy_address[0])
+        proxy_socket.listen(3)  # Will start listening for connections. can handle up to 3 connections at a time
 
         threads = []
         print(f"Listening on {proxy_address[0]}:{proxy_address[1]}")
@@ -94,7 +95,8 @@ def proxy(proxy_address: tuple[str, int], server_adress: tuple[str, int]) -> Non
             try:
                 # Establish connection with client.
                 
-                client_socket, client_address = # * Fill in start (2) # * Fill in end (2)
+                client_socket, client_address = proxy_socket.accept()
+                # accept() STOPS and waits for a connection to be made by a client
 
                 # Create a new thread to handle the client request
                 thread = threading.Thread(target=client_handler, args=(
@@ -119,7 +121,9 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
         while True:
             # Receive data from the client
             
-            data = # * Fill in start (3) # * Fill in end (3)
+            data = client_socket.recv(api.BUFFER_SIZE)  # 2^16
+            # recv() returns an empty string if there is an error or the connection is closed
+            # otherwise, it returns the data received
             
             if not data:
                 break
@@ -153,8 +157,8 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
                     f"{client_prefix} Sending response of length {len(response)} bytes")
 
                 # Send the response back to the client
-                # * Fill in start (4)
-                # * Fill in end (4)
+                client_socket.sendall(response)  # sendall() sends the entire data contained in response to the socket.
+                client_socket.close()  # so that next time we enter the while loop, data will be empty and we will break
                 
             except Exception as e:
                 print(f"Unexpected server error: {e}")
