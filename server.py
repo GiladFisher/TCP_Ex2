@@ -88,8 +88,9 @@ def server(host: str, port: int) -> None:
         server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
         # Prepare the server socket
-        server_socket.bind((host, port)) # Bind the socket to the port
-        server_socket.listen(3)  # maximum number of queued connection. will only get 1 in practice, but wrote 3 for good measure
+        server_socket.bind((host, port))  # Bind the socket to the port
+        server_socket.listen(3)
+        # maximum number of queued connection. will only get 1 in practice, but wrote 3 for good measure
 
         threads = []
         print(f"Listening on {host}:{port}")
@@ -127,7 +128,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
         print(f"Conection established with {client_addr}")
         while True:
             
-            data = client_socket.recv(api.BUFFER_SIZE) # 2^16
+            data = client_socket.recv(api.BUFFER_SIZE)  # 2^16
             # recv() returns an empty string if there is an error or the connection is closed
             # otherwise, it returns the data received
 
@@ -150,6 +151,7 @@ def client_handler(client_socket: socket.socket, client_address: tuple[str, int]
                     f"{client_prefix} Sending response of length {len(response)} bytes")
 
                 client_socket.sendall(response)  # sendall() sends the entire data contained in response to the socket.
+
             except Exception as e:
                 print(f"Unexpected server error: {e}")
                 client_socket.sendall(api.CalculatorHeader.from_error(
